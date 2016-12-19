@@ -8,13 +8,17 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./software.nix
     ];
+
+  # 4.8 seems buggy
+  boot.kernelPackages = pkgs.linuxPackages_4_8;
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   # Define on which hard drive you want to install Grub.
-  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.device = "/dev/disk/by-id/ata-WDC_WD1002FAEX-00Z3A0_WD-WCATR1627472";
   boot.supportedFilesystems = [ "btrfs" ];
   boot.tmpOnTmpfs = true;
 
@@ -49,6 +53,9 @@
 
   security.apparmor.enable = true;
 
+  # security.grsecurity.enable = true;
+
+  services.locate.enable = true;
   services.gpm.enable = true;
 
   # Set your time zone.
@@ -77,7 +84,7 @@
 
   # Enable the KDE Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
-  #services.xserver.desktopManager.kde4.enable = true;
+  services.xserver.desktopManager.kde4.enable = false;
   services.xserver.desktopManager.kde5.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
   services.xserver.desktopManager.xterm.enable = false;
@@ -99,32 +106,48 @@
     uid = 1000;
   };
 
-  environment.systemPackages = [ pkgs.emacs ];
+  system.autoUpgrade.enable = true;
 
-  systemd.user.services.emacs = {
-    description = "Emacs Daemon";
-    environment = {
-      GTK_DATA_PREFIX = config.system.path;
-      SSH_AUTH_SOCK = "%t/ssh-agent";
-      GTK_PATH = "${config.system.path}/lib/gtk-3.0:${config.system.path}/lib/gtk-2.0";
-      NIX_PROFILES = "${pkgs.lib.concatStringsSep ":" config.environment.profiles}";
-      TERMINFO_DIRS = "/run/current-system/sw/share/terminfo";
-      ASPELL_CONF = "dict-dir /run/current-system/sw/lib/aspell";
+#  systemd.user.services.emacs = {
+##    description = "Emacs Daemon";
+#    environment = {
+##      GTK_DATA_PREFIX = config.system.path;
+#      SSH_AUTH_SOCK = "%t/ssh-agent";
+#      GTK_PATH = "${config.system.path}/lib/gtk-3.0:${config.system.path}/lib/gtk-2.0";
+#      NIX_PROFILES = "${pkgs.lib.concatStringsSep ":" config.environment.profiles}";
+#      TERMINFO_DIRS = "/run/current-system/sw/share/terminfo";
+#      ASPELL_CONF = "dict-dir /run/current-system/sw/lib/aspell";
+#    };
+#    serviceConfig = {
+#      Type = "forking";
+#      ExecStart = "${pkgs.emacs}/bin/emacs --daemon";
+#      ExecStop = "${pkgs.emacs}/bin/emacsclient --eval (kill-emacs)";
+#      Restart = "always";
+#    };
+#    wantedBy = [ "default.target" ];
+#  };
+
+  # systemd.services.emacs.enable = true;
+
+  nixpkgs.config = {
+   allowUnfree = true;
+
+    packageOverrides = pkgs: {
+      firefox-unwrapped = pkgs.firefox-unwrapped.override {
+        enableGTK3 = true;
+        enableOfficialBranding = true;
+      };
     };
-    serviceConfig = {
-      Type = "forking";
-      ExecStart = "${pkgs.emacs}/bin/emacs --daemon";
-      ExecStop = "${pkgs.emacs}/bin/emacsclient --eval (kill-emacs)";
-      Restart = "always";
+
+    firefox = {
+      ffmpegSupport = true;
+      # gecko_mediaplayer = true;
+      # gst_all = true;
+      libpulseaudio = true;
     };
-    wantedBy = [ "default.target" ];
   };
 
-  systemd.services.emacs.enable = true;
-
-  nixpkgs.config.allowUnfree = true;
-
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "15.09";
+  # system.stateVersion = "16.09";
 
 }
