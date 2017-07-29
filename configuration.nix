@@ -41,6 +41,9 @@
       104.31.16.3 thepiratebay.se
     ";
 
+  networking.firewall.allowedTCPPorts = [ 1714:1764 ];
+  networking.firewall.allowedUDPPorts = [ 1714:1764 ];
+  networking.firewall.allowPing = true;
   networking.wireless.enable = false;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;
 
