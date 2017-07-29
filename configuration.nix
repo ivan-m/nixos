@@ -12,7 +12,9 @@
     ];
 
   # 4.8 seems buggy
-  boot.kernelPackages = pkgs.linuxPackages_4_8;
+  # boot.kernelPackages = pkgs.linuxPackages_4_8;
+
+  nixpkgs.config.allowUnfree = true;
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
@@ -23,6 +25,7 @@
   boot.tmpOnTmpfs = true;
 
   fonts.enableFontDir = true;
+  fonts.fontconfig.cache32Bit = true;
 
   # Conflicts with OpenSSH
   # gnu = true;
@@ -32,6 +35,14 @@
   hardware.pulseaudio.support32Bit = true;
 
   networking.hostName = "Sniper"; # Define your hostname.
+  networking.extraHosts =
+    "
+      192.168.1.1 r7000
+
+      141.101.118.194 thepiratebay.org
+      104.31.16.3 thepiratebay.se
+    ";
+
   networking.wireless.enable = false;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;
 
@@ -80,12 +91,14 @@
   services.xserver.layout = "us";
   # services.xserver.xkbOptions = "eurosign:e";
   services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
+
 
   # Enable the KDE Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.kde4.enable = false;
-  services.xserver.desktopManager.kde5.enable = true;
+  # services.xserver.desktopManager.kde4.enable = false;
+  services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.windowManager.xmonad.enable = false;
@@ -95,7 +108,7 @@
   #services.xserver.xkbOptions = "";
 
   sound = {
-    enableMediaKeys = true;
+    mediaKeys.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -128,24 +141,6 @@
 #  };
 
   # systemd.services.emacs.enable = true;
-
-  nixpkgs.config = {
-   allowUnfree = true;
-
-    packageOverrides = pkgs: {
-      firefox-unwrapped = pkgs.firefox-unwrapped.override {
-        enableGTK3 = true;
-        enableOfficialBranding = true;
-      };
-    };
-
-    firefox = {
-      ffmpegSupport = true;
-      # gecko_mediaplayer = true;
-      # gst_all = true;
-      libpulseaudio = true;
-    };
-  };
 
   # The NixOS release to be compatible with for stateful data such as databases.
   # system.stateVersion = "16.09";
