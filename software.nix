@@ -16,6 +16,7 @@ let
       kcompletion
       kconfig
       kdecoration
+      kdegraphics-thumbnailers
       kdenetwork-filesharing
       kdeplasma-addons
       kdesu
