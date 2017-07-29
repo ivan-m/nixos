@@ -46,6 +46,7 @@ let
       plasma-pa
       plasma-workspace
       plasma-workspace-wallpapers
+      polkit-kde-agent
       systemsettings
       ];
 

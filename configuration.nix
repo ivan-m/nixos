@@ -14,8 +14,6 @@
   # 4.8 seems buggy
   # boot.kernelPackages = pkgs.linuxPackages_4_8;
 
-  nixpkgs.config.allowUnfree = true;
-
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
@@ -47,6 +45,7 @@
   # networking.networkmanager.enable = true;
 
   nix.buildCores = 4;
+  nix.gc.automatic = true;
 
   # Select internationalisation properties.
   i18n = {
@@ -62,9 +61,14 @@
     set tabsize 4
   '';
 
+  programs.ssh.startAgent = true;
+  programs.ssh.setXAuthLocation = true;
+
   security.apparmor.enable = true;
 
   # security.grsecurity.enable = true;
+
+  security.pam.enableSSHAgentAuth = true;
 
   services.locate.enable = true;
   services.gpm.enable = true;
