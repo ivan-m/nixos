@@ -69,19 +69,35 @@ in
    wine.build = "wine32";
 
     packageOverrides = pkgs: {
-      firefox-unwrapped = pkgs.firefox-unwrapped.override {
-        enableGTK3 = true;
-        enableOfficialBranding = true;
+      wine = unstable.wineUnstable.override {
+        pngSupport        = true;
+        jpegSupport       = true;
+        tiffSupport       = true;
+        gettextSupport    = true;
+        fontconfigSupport = true;
+        alsaSupport       = true;
+        gtkSupport        = true;
+        openglSupport     = true;
+        tlsSupport        = true;
+        gstreamerSupport  = true;
+        dbusSupport       = true;
+        cairoSupport      = true;
+        pulseaudioSupport = true;
       };
 
       wine = unstable.wineUnstable;
     };
 
     firefox = {
-      ffmpegSupport = true;
-      gecko_mediaplayer = true;
-      gst_all = true;
-      libpulseaudio = true;
+      drmSupport             = true;
+      enableOfficialBranding = true;
+      ffmpegSupport          = true;
+      gecko_mediaplayer      = true;
+      gst_all                = true;
+      gtk3Support            = true;
+      libpulseaudio          = true;
+      # Not just setting privacySupport as I don't want googleAPISupport
+      webrtcsupport          = true;
     };
   };
 
