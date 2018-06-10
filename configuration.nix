@@ -2,13 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
+  # disabledModules = [ "hardware/video/nvidia.nix" ];
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./software.nix
+      # <unstable/nixos/modules/hardware/video/nvidia.nix>
     ];
 
   # 4.8 seems buggy
@@ -22,8 +25,10 @@
   boot.supportedFilesystems = [ "btrfs" ];
   boot.tmpOnTmpfs = true;
 
+  fonts.enableDefaultFonts = true;
   fonts.enableFontDir = true;
   fonts.fontconfig.cache32Bit = true;
+  fonts.fonts = [ pkgs.dejavu_fonts pkgs.symbola pkgs.oxygenfonts ];
 
   # Conflicts with OpenSSH
   # gnu = true;
@@ -57,6 +62,8 @@
     consoleUseXkbConfig = true;
     defaultLocale = "en_AU.UTF-8";
   };
+
+  programs.man.enable = true;
 
   programs.nano.nanorc = ''
     set nowrap
@@ -97,18 +104,21 @@
   services.xserver.enable = true;
   services.xserver.layout = "us";
   # services.xserver.xkbOptions = "eurosign:e";
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = [ "nvidiaBeta" ];
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
 
 
   # Enable the KDE Desktop Environment.
+  services.xserver.desktopManager.default = "plasma5";
   services.xserver.displayManager.sddm.enable = true;
-  # services.xserver.desktopManager.kde4.enable = false;
   services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.desktopManager.plasma5.enableQt4Support = false;
+  services.xserver.desktopManager.xfce.enable = false;
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.windowManager.xmonad.enable = false;
+  services.xserver.desktopManager.lxqt.enable = true;
+  services.xserver.desktopManager.enlightenment.enable = true;
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
   services.xserver.modules = [ pkgs.xf86_input_wacom ];
   services.xserver.wacom.enable = true;
